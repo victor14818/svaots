@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<issue>
+ <subject>Issue with attachment</subject>
+ <project_id>31</project_id>
+ <tracker_id>5</tracker_id>
+ <status_id>1</status_id>
+ <uploads type="array">
+  <upload>
+   <token>1504.f432b7baff9dbeeb02057e2e2e7507fb</token>
+   <filename>index.jpeg</filename>
+   <content_type>image/jpeg</content_type>
+  </upload>
+ </uploads>
+</issue>
