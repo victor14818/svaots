@@ -49,6 +49,11 @@ class Handler extends ExceptionHandler
 	{
 	    return redirect()->guest('/');
 	}*/
+
+	if ($exception instanceof PostTooLargeException) {
+        	return response('File too large!', 422);
+    	}
+
 	return parent::render($request, $exception);
     }
 

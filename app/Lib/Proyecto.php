@@ -14,11 +14,11 @@ class Proyecto
     function __construct($id,$nm,$dsc,$auth,$tiempo)
     {
         $this->id = $id;
-	$this->name = $nm;
-	$this->description = $dsc;
-	$this->proyectos = array();
-	$this->author = $auth;
-	$this->tiempoEstimado = $tiempo;
+    	$this->name = $nm;
+    	$this->description = $dsc;
+    	$this->proyectos = array();
+    	$this->author = $auth;
+    	$this->tiempoEstimado = $tiempo;
     }
 }
 

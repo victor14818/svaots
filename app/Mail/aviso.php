@@ -29,14 +29,15 @@ class aviso extends Mailable
      */
     public function build()
     {
-        return $this->subject('OT '.$this->data['ot_proyecto'])
+        return $this->subject('OTs Ingeniería SVA - '. $this->data['project'] . ' - '. $this->data['issueSubject'] )
 				->view('avisoMail')->with([
-                        'asunto' => $this->data['asunto'],
-                        'tel' => $this->data['tel'],				
-                        'proyecto' => $this->data['ot_proyecto'],
-                        'nombre' => $this->data['name'],
-						'correo' => $this->data['mail'],
-						'tarea_id' => $this->data['issue_id'],
+                        'subject' => $this->data['issueSubject'],
+                        'phone' => $this->data['phone'],				
+                        'project' => $this->data['project'],
+                        'name' => $this->data['name'],
+						'email' => $this->data['email'],
+						'issueId' => $this->data['issueId'],
+                        'descripcion' => $this->data['issueDescription']
                     ]);
     }
 }

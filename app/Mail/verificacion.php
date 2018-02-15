@@ -30,12 +30,14 @@ class verificacion extends Mailable
      */
     public function build()
     {
-        return $this->subject('Validación tarea '.$this->data['issue_subject'])
+        return $this->subject('OTs Ingeniería SVA - validación tarea '.$this->data['issueSubject'])
 				->view('verificacionMail')->with([
                         'name' => $this->data['name'],
                         'email' => $this->data['email'],
-						'confirmation_token' => $this->data['confirmation_token'],
-						'issue_id' => $this->data['issue_id'],
+                        'subject' => $this->data['issueSubject'],
+                        'description' => $this->data['issueDescription'],
+						'token' => $this->data['token'],
+						'issueId' => $this->data['issueId'],
                     ]);
     }
 }

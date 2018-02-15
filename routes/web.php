@@ -15,13 +15,13 @@ Auth::routes();
 
 Route::get('/', 'ProyectosController@lst_proyectos');
 
-Route::post('nvot', 'TareasController@crearot');
+Route::get('nuevatarea', 'TareasController@showFormularioGenerico');
 
-Route::post('nvotingreso', 'TareasController@ingresoot');
+Route::post('nuevatareaingreso', 'TareasController@ingresoTarea');
 
 Route::get('nvotconfirmacion/email/{email}/seq/{confirm_token}','TareasController@confirmarCorreo');
 
-Route::get('buscar_OT/tarea/{tarea}/email/{email}/seq/{confirm_token}', 'BusquedasController@buscar_ot');
+Route::get('buscartarea/tarea/{tarea}/email/{email}/seq/{confirm_token}', 'BusquedasController@buscarTarea');
 
 Route::post('buscar_tarea', 'BusquedasController@buscar_tarea');
 
@@ -54,7 +54,7 @@ Route::get('encuesta/tarea/{tarea}/seq/{seq}', 'EncuestaController@showencuesta'
 Route::post('nvencuestaingreso', 'EncuestaController@ingreso_encuesta');
 
 
-
+Route::get('prueba', 'TareasController@pruebaemail');
 
 
 

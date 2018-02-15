@@ -29,12 +29,14 @@ class confirmacion extends Mailable
      */
     public function build()
     {
-        return $this->subject('Confirmación tarea '.$this->data['issue_subject'])
+        return $this->subject('OTs Ingeniería SVA - confirmación ingreso tarea ' . $this->data['issueId'] . ' - ' . $this->data['issueSubject'])
 				->view('confirmacionMail')->with([
                         'name' => $this->data['name'],
-			'confirmation_token' => $this->data['token'],
-			'issue_id' => $this->data['issue_id'],
-			'correo' => $this->data['correo'],
+                        'token' => $this->data['token'],
+            			'issueId' => $this->data['issueId'],
+            			'email' => $this->data['email'],
+                        'subject' => $this->data['issueSubject'],
+                        'description' => $this->data['issueDescription'],
                     ]);
     }
 }

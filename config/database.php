@@ -43,7 +43,7 @@ return [
             'driver' => 'mysql',
             'host' => env('DB_HOST', 'localhost'),
             'port' => env('DB_PORT', '3306'),
-            'database' => env('DB_DATABASE', 'svaots'),
+            'database' => env('DB_DATABASE', 'svaotslab'),
             'username' => env('DB_USERNAME', 'sva'),
             'password' => env('DB_PASSWORD', 'Sva9485'),
             'unix_socket' => env('DB_SOCKET', ''),

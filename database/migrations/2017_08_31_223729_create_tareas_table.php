@@ -15,22 +15,20 @@ class CreateTareasTable extends Migration
     {
         Schema::create('tareas', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('tarea')->nullable();
-            $table->integer('proyecto')->nullable();
-            $table->string('proyecto_nombre')->nullable();
-            $table->string('proyecto_autor')->nullable();
-            $table->string('asunto')->nullable();
-            $table->string('descripcion')->nullable();
-	    $table->integer('progreso')->nullable();
-	    $table->string('nombre_cntct')->nullable();
-            $table->string('email_cntct')->nullable();
-            $table->string('telefono_cntct')->nullable();
-            $table->string('area_cntct')->nullable();
-            $table->integer('estado')->nullable();
-            $table->string('token_verificacion')->nullable();
-	    $table->date('fecha_finalizacion')->nullable();
-	    $table->string('status')->nullable();
-	    $table->timestamps();
+            $table->integer('numeroTarea')->unique()->nullable();
+            $table->integer('numeroProyecto');
+            $table->string('nombreProyecto',255);
+            $table->integer('autorProyecto'); 
+            $table->integer('tiempoEstimadoProyecto');
+            $table->string('asunto',255);
+            $table->text('descripcion');
+            $table->string('nombreCliente',255);
+            $table->string('emailCliente',255);
+            $table->string('telefonoCliente',255);
+            $table->boolean('validado');
+            $table->string('token',255);
+            $table->date('fecha_finalizacion')->nullable();
+            $table->timestamps();
         });
     }
 

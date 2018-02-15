@@ -15,11 +15,11 @@ class CreateAdjuntosTable extends Migration
     {
         Schema::create('adjuntos', function (Blueprint $table) {
             $table->increments('id');
-	    $table->string('name')->nullable();
-	    $table->string('type')->nullable();
-	    $table->string('absolute_path')->nullable();
-	    $table->string('relative_path')->nullable();
-	    $table->integer('issue')->nullable();
+    	    $table->string('name')->nullable();
+    	    $table->string('type')->nullable();
+    	    $table->string('absolute_path')->nullable();
+    	    $table->string('relative_path')->nullable();
+    	    $table->integer('issue')->nullable();
             $table->timestamps();
         });
     }
