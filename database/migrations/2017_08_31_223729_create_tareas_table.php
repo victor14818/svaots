@@ -30,6 +30,16 @@ class CreateTareasTable extends Migration
             $table->date('fecha_finalizacion')->nullable();
             $table->timestamps();
         });
+
+
+        Schema::create('proyectos', function (Blueprint $table) {
+            $table->increments('id');
+            $table->integer('numeroProyecto');
+            $table->string('nombreProyecto',255);
+            $table->integer('formularioId')->nullable(); 
+            $table->boolean('formularioGenerico')->nullable();
+            $table->timestamps();
+        });
     }
 
     /**
@@ -40,5 +50,7 @@ class CreateTareasTable extends Migration
     public function down()
     {
         Schema::dropIfExists('tareas');
+
+        Schema::dropIfExists('proyectos');
     }
 }

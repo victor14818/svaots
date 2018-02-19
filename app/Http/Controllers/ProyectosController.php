@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Lib\Proyecto;
 use App\Lib\EasyRedmineConn;
 use Exception;
+use App\Proyecto as modelProyecto;
+use App\Adjunto;
 
 class ProyectosController extends Controller
 {
@@ -42,7 +44,7 @@ class ProyectosController extends Controller
 		}
 
 		//Se establece el poryecto raíz, éstos valor se buscarón de antemano
-		$raiz = new Proyecto('221','OTs Internas','OTs de Clientes internos','0','0');
+		$raiz = new Proyecto('221','OTs Internas','OTs de Clientes internos','0','0', Null);
 		self::get_proyectos_hijos($raiz->proyectos,$raiz->id,$proyectos);
 
 		//Se convierte el árbol de proyectos en un array, tomando únicamente las hojas.
@@ -92,7 +94,16 @@ class ProyectosController extends Controller
 		 				$tiempo_estimado = $custom_field->value;
 				    }
 				}
-				$proyecto_hijo=new Proyecto($project->id,$project->name,$project->description,$project->author["id"],$tiempo_estimado);
+				//Se buscan las propiedades locales
+				//archivo de formulario genérico
+				$archivoFormularioGenerico = Null;
+				$Proyecto = modelProyecto::where('numeroProyecto',$project->id)->first();
+				if(isset($Proyecto))
+				{
+					$adjunto = Adjunto::find($Proyecto->id);
+					$archivoFormularioGenerico = $adjunto->id;
+				}
+				$proyecto_hijo=new Proyecto($project->id,$project->name,$project->description,$project->author["id"],$tiempo_estimado,$archivoFormularioGenerico);
 				self::get_proyectos_hijos($proyecto_hijo->proyectos,"".$proyecto_hijo->id,$proyectos);
 				array_push($arreglo_padre,$proyecto_hijo);
 		    }
@@ -147,7 +158,7 @@ class ProyectosController extends Controller
 		}
 
 		//Se establece el poryecto raíz, éstos valor se buscarón de antemano
-		$raiz = new Proyecto('221','OTs Internas','OTs de Clientes internos','0','0');
+		$raiz = new Proyecto('221','OTs Internas','OTs de Clientes internos','0','0', Null);
 		self::get_proyectos_hijos($raiz->proyectos,$raiz->id,$proyectos);
 
 		//Se convierte el árbol de proyectos en un array, tomando únicamente las hojas.
@@ -156,5 +167,22 @@ class ProyectosController extends Controller
 
 		return view('aplicacionOTS.informacion', [ 'listaProyectos' => $listaProyectos ]);
     }
+
+    public function download($fileId)
+	{
+		$file = Adjunto::find($fileId);
+		if (file_exists($file->absolute_path))
+		{
+			$headers = array(
+				'Cache-Control' => 'no-store,no-cache, must-revalidate, post-check=0, pre-check=0',
+			);
+
+			return response()->download($file->absolute_path, $file->name, $headers);
+		}
+		else
+		{
+			exit('Requested file does not exist on our server! ');
+		}
+	}
 
 }

@@ -74,6 +74,9 @@
 								{{ Form::hidden('proyectoTiempoEstimado',$proyecto->tiempoEstimado) }}
 								{{ Form::submit('Nueva OT',[ 'class' => 'btn btn-danger' ]) }}
 							{{ Form::close() }}
+							@if(isset($proyecto->archivoFormularioGenerico))
+								<a href='{{ url("/") }}/descargararchivoproyecto/{{ $proyecto->archivoFormularioGenerico }}' class='btn btn-info'>Descargar</a>
+							@endif
 						</td>
 					</tr>
 				@endforeach

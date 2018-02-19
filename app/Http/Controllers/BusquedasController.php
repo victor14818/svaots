@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use App\Tarea;
 use App\Lib\EasyRedmineConn;
 use Exception;
+use Redirect;
 
 class BusquedasController extends Controller
 {
@@ -59,107 +60,11 @@ class BusquedasController extends Controller
         return view('aplicacionOTS.busquedaTarea', ['tarea' => $tarea, 'datosTareaRedmine' => $datosTareaRedmine, 'listaNotas' => $listaNotas, 'listaArchivosAdjuntos' => $listaArchivosAdjuntos, 'key' => $redmineConnectionAPI->getKey()]);    		
     }
 
-    public function buscar_tarea(Request $request)
+    public function buscarTareap(Request $request)
     {
-    	$redmineConnectionAPI = new EasyRedmineConn();	
-		try{
-		    $respuesta = $redmineConnectionAPI->buscarTarea();
-		    $issue=simplexml_load_string($respuesta);
-		    
-		    /*
-		    * Validación Token y correo guardados en la descripción
-		    */
-		    $description_valores_tmp = explode("|",(string)$issue->description);
-		    if(count($description_valores_tmp) == 3){
-			$description_valores = explode(";",$description_valores_tmp[1]);
-	    		if(count($description_valores) == 7){
-			    $nombre_clnt = explode(":",$description_valores[0])[1];
-			    $correo_clnt = explode(":",$description_valores[1])[1];
-			    $token_clnt = explode(":",$description_valores[4])[1];
-			    $description = explode(":",$description_valores[5])[1];
-			    if($correo_clnt != strtolower($request->cor) || $token_clnt != $request->cod)
-			    { 
-				throw new \Exception("Código o correo incorrecto"); 
-			    }
-		    	}else{ throw new \Exception("Mal formato de la descripción en redmine");}
-		    }else{ throw new \Exception("Mal formato de la descripción en redmine");}
-
-		    $status = (string)$issue->status['name'];
-		    $assigned_to_id = $issue->assigned_to['id'];
-		    $assigned_to_name = (string)$issue->assigned_to['name'];
-		    $project_name = strtolower((string)$issue->project['name']);
-		    $subject = (string)$issue->subject;
-		    //$start_date_sp = explode(" ",(string)$tareas[0]->created_at);
-		    $start_date = (string)$issue->start_date;
-		    $due_date = (string)$issue->due_date;
-		    $done_ratio = (string)$issue->done_ratio;
-
-		    //Cálculo de tiempo activo
-		    $tiempo_activo = 0;
-		    if($status == "Closed" || $status == "Rejected")
-		    {
-			if($due_date != "")
-			{ 
-			    $tiempo_activo =ceil( (strtotime($issue->due_date) - strtotime($issue->start_date)) /86400);
-			    $tiempo_activo = "<div id=\"div_alert_error\" class=\"alert alert-danger\">".$tiempo_activo."</div>";
-			 }
-			    $tiempo_activo =ceil( (strtotime($issue->due_date) - strtotime($issue->start_date)) /86400);
-			    $tiempo_activo = "<div id=\"div_alert_error\" class=\"alert alert-info\">".$tiempo_activo."</div>";
-		    }else
-		    {
-			$tiempo_activo = ceil( (time() - strtotime($issue->start_date)) / 86400);
-			if($tiempo_activo > 0 && $tiempo_activo < 15)
-			{
-			    $tiempo_activo = "<div id=\"div_alert_error\" class=\"alert alert-success\">".$tiempo_activo."</div>";
-			}
-			elseif($days >= 15 && $days < 25)
-			{
-			    $tiempo_activo = "<div id=\"div_alert_error\" class=\"alert alert-warning\">".$tiempo_activo."</div>";
-			}
-			else
-			{
-			    $tiempo_activo = "<div id=\"div_alert_error\" class=\"alert alert-danger\">".$tiempo_activo."</div>";
-			}
-		    }
-
-		    //Notas
-		    $str_journals = "";
-		    $journals = $issue->journals;
-	            $str_journals = "<table class=\"table table-striped table-bordered\"><thead><tr><th>Autor</th><th>Nota</th><th>Fecha</th></tr></thead><tbody>";
-		    foreach($journals->journal as $journal)
-		    {
-			$dt = Carbon::parse($journal->created_on)->timezone('UTC');
-			$toDay = $dt->format('d');
-			$toMonth = $dt->format('m');
-			$toYear = $dt->format('Y');
-			$dateUTC = Carbon::createFromDate($toYear, $toMonth, $toDay, 'UTC');
-			$datePST = Carbon::createFromDate($toYear, $toMonth, $toDay, 'America/Guatemala');
-			$difference = $dateUTC->diffInHours($datePST);
-			$date = $dt->addHours($difference);
-			if(!empty($journal->notes))
-			{
-			    $str_journals .= "<tr><td>".$journal->user['name']."</td><td>".$journal->notes."</td><td>".$date."</td></tr>";
-			}
-		    }
-		    $str_journals .= "</tbody></table>";
-
-		    //Generar forms de descarga llamada POST con parametros de link de descarga en Redmine, 
-		    //Dentro del post recuperar el archivo, guardarlo temporalemente y luego realizar un response con el archivo que incluya eliminación.
-
-		    $str_rst_links = "";
-		    $attachments = $issue->attachments;
-		    foreach($attachments->attachment as $attachment)
-		    {
-			$str_rst_links .= "<form method='POST' action='".url('/')."/download'>".csrf_field()."<input type='hidden' value='".$attachment->filename."' name='fileName'><input type='hidden' value='".$attachment->content_url."?key=".$this->key."' name='fileUrl'><input type='hidden' value='".$attachment->content_type."' name='fileContentType'><input class='btn btn-info' type='submit' value='".$attachment->filename."'></form>";
-		    }
-
-	    	return response()->json(array('issue_subject' => $subject, 'issue_description' => $description, 'issue_status' => $status, 'issue_done_ratio' => $done_ratio, 'issue_start_date' => $start_date, 'issue_due_date' => $due_date, 'issue_assigned' => $assigned_to_name, 'issue_project_name' => $project_name, 'tiempo_activo' => $tiempo_activo, 'journals' => $str_journals, 'nombre_clnt' => $nombre_clnt, 'down_links' => $str_rst_links), 200);
-	
-		}catch(\Exception $e){
-		    Log::info($e);
-		    App::abort();
-		}
+    		return Redirect::to('buscartarea/tarea/'.$request->tareaId.'/email/'.$request->correo.'/seq/'.$request->token);
     }
+
 
     public function cerrar_tarea(Request $request)
     {

@@ -14,22 +14,25 @@
 	<div class="panel-heading">Datos de la tarea</div>
 	<center>
 		<div class="panel-body">
+			{{ Form::open([ 'url' => '' ]) }}
 			<div class="row">
 				<div class="col-md-6">{{ Form::label('Número de tarea') }}</div>
-				<div class="col-md-6">{{ Form::text('tarea_name', '', array('class' => 'form-control', 'required', 'id' => 'tarea_id')) }}</div>
+				<div class="col-md-6">{{ Form::text('tareaId', '', array('class' => 'form-control', 'required', 'id' => 'tareaId')) }}</div>
 			</div>
 			<div class="row">
 				<div class="col-md-6">{{ Form::label('Código') }}</div>
-				<div class="col-md-6">{{ Form::text('codigo_name', '', array('class' => 'form-control', 'id' => 'code_id')) }}</div>
+				<div class="col-md-6">{{ Form::text('token', '', array('class' => 'form-control', 'id' => 'token')) }}</div>
 			</div>
 			<div class="row">
 				<div class="col-md-6">{{ Form::label('Correo') }}</div>
-				<div class="col-md-6">{{ Form::text('correo_name', '', array('class' => 'form-control', 'id' => 'correo_id')) }}</div>
+				<div class="col-md-6">{{ Form::text('correo', '', array('class' => 'form-control', 'id' => 'correo')) }}</div>
 			</div>
 			<br>
 			<div class="row">
 				<div class="col-md-12">
-					{{ Form::button('Buscar',['onClick'=>'alert("hola")', 'class' => 'btn btn-danger form-control']) }}
+					<center>
+						{{ Form::submit('Buscar', [ 'class' => 'btn btn-danger']) }}
+					</center>
 				</div>
 			</div>
 		</div>

@@ -15,6 +15,8 @@ Auth::routes();
 
 Route::get('/', 'ProyectosController@lst_proyectos');
 
+Route::get('descargararchivoproyecto/{fileId}','ProyectosController@download');
+
 Route::get('nuevatarea', 'TareasController@showFormularioGenerico');
 
 Route::post('nuevatareaingreso', 'TareasController@ingresoTarea');
@@ -23,7 +25,7 @@ Route::get('nvotconfirmacion/email/{email}/seq/{confirm_token}','TareasControlle
 
 Route::get('buscartarea/tarea/{tarea}/email/{email}/seq/{confirm_token}', 'BusquedasController@buscarTarea');
 
-Route::post('buscar_tarea', 'BusquedasController@buscar_tarea');
+Route::post('buscartareap', 'BusquedasController@buscarTareap');
 
 Route::get('download/{filename}', function($filename)
 {
@@ -47,6 +49,10 @@ Route::get('informacion','ProyectosController@lst_informacion');
 
 Route::get('/home', 'HomeController@index')->name('home');
 
+Route::get('formsProyectos/show','FormsProyectosController@show');
+
+Route::post('formsProyectos/create','FormsProyectosController@create');
+//
 Route::post('cerrar_tarea', 'BusquedasController@cerrar_tarea');
 
 Route::get('encuesta/tarea/{tarea}/seq/{seq}', 'EncuestaController@showencuesta');
@@ -55,6 +61,6 @@ Route::post('nvencuestaingreso', 'EncuestaController@ingreso_encuesta');
 
 
 Route::get('prueba', 'TareasController@pruebaemail');
-
+//
 
 
