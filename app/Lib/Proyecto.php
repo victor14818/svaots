@@ -10,8 +10,8 @@ class Proyecto
     public $proyectos;
     public $author;
     public $tiempoEstimado;
-    //set
     public $archivoFormularioGenerico;
+
     function __construct($id,$nm,$dsc,$auth,$tiempo,$archivoFormGen)
     {
         $this->id = $id;

@@ -19,6 +19,7 @@ use App\Lib\EasyRedmineConn;
 use Exception;
 use Validator;
 use Illuminate\Support\Facades\Input;
+use GuzzleHttp\Client;
 
 class TareasController extends Controller
 {
@@ -33,7 +34,14 @@ class TareasController extends Controller
 		$proyectoNombre = $request->proyectoNombre;
 		$proyectoAutor = $request->proyectoAutor;
 		$proyectoTiempoEstimado = $request->proyectoTiempoEstimado;
-		return view('aplicacionOTS.formularioGenerico',['proyectoId' => $proyectoId, 'proyectoNombre' => $proyectoNombre, 'proyectoAutor' => $proyectoAutor, 'proyectoTiempoEstimado' => $proyectoTiempoEstimado]);
+		$tieneFormularios = true;
+		$rutaProyectoArchivos = 'formulariosProyectos/'.$request->proyectoId;
+		$archivosDirectorioProyecto = Storage::files($rutaProyectoArchivos);
+		if (count($archivosDirectorioProyecto) == 0) 
+		{
+			$tieneFormularios = false;
+		}
+		return view('aplicacionOTS.formularioGenerico',['proyectoId' => $proyectoId, 'proyectoNombre' => $proyectoNombre, 'proyectoAutor' => $proyectoAutor, 'proyectoTiempoEstimado' => $proyectoTiempoEstimado, 'tieneFormularios' => $tieneFormularios, 'proyectoDescripcion'  => $request->proyectoDescripcion]);
     }
 
     public function ingresoTarea(Request $request)
@@ -277,5 +285,86 @@ class TareasController extends Controller
 		    $file_adjunto = Adjunto::find($adjunto->id);
 		    $file_adjunto->delete();
 		}		
+    }
+
+    public function prueba()
+    {
+    	$nsoIP = '10.255.24.188';
+    	$nsoPort = '8080';
+    	$url = 'http://'.$nsoIP.':'.$nsoPort.'/api/running/devices?format=json';
+    	$USER = 'admin';
+    	$PASS = 'admin';
+
+    	$client = new \GuzzleHttp\Client();
+		$response = $client->request('GET', $url, [
+                    'auth'    => [
+                        	$USER
+                    	,	$PASS
+                    ],
+                    'headers' => [
+                        	'Contet-Type: application/vnd.yang.data+xml'
+                    ]
+                ]
+            );
+		$devicesResponse = json_decode($response->getBody(),true);
+		$devicesListTMP  = $devicesResponse['tailf-ncs:devices']['device'];
+		//print_r($devicesResponseTMP['tailf-ncs:devices']['device']);
+		$devicesList = array();
+		foreach ($devicesListTMP as $k=>$v){
+    		$devicesList[$k]=$v['name'];
+		}
+    	//$url='http://'.$nsoIP.':'.$nsoPort.'/api/running/services/pcrf_plan:pcrf_plan?format=json';
+		//echo $response->getStatusCode();
+		//echo $response->getHeaderLine('content-type');
+		//echo $response->getBody();
+
+		return view('pruebaNSO.hef', [ 'devicesList' => $devicesList  ]);
+    }
+
+    public function pruebaPOST(Request $request)
+    {
+    	$dominios = array();
+    	foreach(explode("\n", $request->urls) as $url)
+    	{
+    		array_push($dominios,$url);
+    	}
+
+    	$nsoIP = '10.255.24.188';
+    	$nsoPort = '8080';
+    	$url = 'http://'.$nsoIP.':'.$nsoPort.'/api/running/services';
+    	$USER = 'admin';
+    	$PASS = 'admin';
+
+    	$payload = json_encode('{
+    		"URL_WAM":"URL_WAM": {
+    			"name": "URL_WAM"
+    		,	"cliente": "test"
+    		,	"device": "GGSN-GV"
+    		,	"flag": "1"
+    		,	"lista_dominios": '.print_r($dominios).'
+    		}
+    	}');
+    	var_dump($payload);
+/*
+    	$client = new \GuzzleHttp\Client();
+	   	$response = $client->post($url ,[
+					'auth'  => [
+                        	$USER
+                    	,	$PASS
+                    ],
+                    'json'	=> [
+                    	$payload
+                    ],
+                    'headers' => [
+                        	'Contet-Type: application/vnd.yang.data+xml'
+                    ]
+				]	
+			);
+    	//services WAN::: client  
+    	//flag
+		echo $response->getStatusCode();
+		echo $response->getHeaderLine('content-type');
+		echo $response->getBody();
+*/	
     }
 }

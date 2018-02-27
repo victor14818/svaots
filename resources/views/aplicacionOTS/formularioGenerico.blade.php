@@ -2,8 +2,14 @@
 
 @section('content')
 	    <center><h1>{{ $proyectoNombre }}</h1><hr></center>
+	    @if($tieneFormularios)
+	        <a href="{{ url('/').'/projects/'.$proyectoId.'/downloadAttachments' }}" class="btn btn-success pull-right">
+	        	<span class="glyphicon glyphicon-download-alt"></span> Descargar Formularios
+	        </a>
+        @endif
         <a href="{{ url('/') }}" class="btn btn-warning">Inicio</a><hr>
-	    
+        <center>{{ $proyectoDescripcion }}<center>
+   		<hr>     	
 	    <div id="div_alert_correcto" class="alert alert-success alert-dismissable" style="display:none">
 		<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
 		Tarea ingresada correctamente. Número de tarea => <strong id="alerta_correcto"></strong>

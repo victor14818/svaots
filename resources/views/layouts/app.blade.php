@@ -51,7 +51,7 @@
                                 </a>
 
                                 <ul class="dropdown-menu" role="menu">
-                                    <li><a href="{{ url('formsProyectos/show') }}">Forms</a></li>
+                                    <li><a href="{{ url('projects/show') }}">Proyectos</a></li>
                                     <li><a href="{{ route('register') }}">Register</a></li>
                                     <li>
                                         <a href="{{ route('logout') }}"
@@ -71,8 +71,10 @@
                 </div>
             </div>
         </nav>
-
-        @yield('content')
+        <div class="container">
+            @include('modals.message')
+            @yield('content')
+        </div>
     </div>
 
     <!-- Scripts -->

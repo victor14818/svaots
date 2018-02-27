@@ -3,7 +3,6 @@
 @section('content')
 <style>
 	tr:hover {
-	    text-align: center;
 	    color:white;
 	    background-color: #EF3729;
 	}
@@ -64,13 +63,14 @@
 				@foreach($listaProyectos as $proyecto)
 					<tr>
 						<td class="elegible" style="font-family:'Courier New', Courier, monospace; font-style: italic;"> {{ $proyecto->name }}</td>
-						<td class="elegible" style="font-family:'Courier New', Courier, monospace; font-style: italic; font-size:80%"> {{ $proyecto->description }}</td>
+						<td class="elegible" style="font-family:'Courier New', Courier, monospace; font-style: italic;"> {{ $proyecto->description }}</td>
 						<td>
 							{{ Form::open([ 'url' => 'nuevatarea', 'id' => trim(strtolower($proyecto->name)), 'method' => 'GET' ]) }}
 								{{ Form::token() }}
 								{{ Form::hidden('proyectoId',$proyecto->id) }}
 								{{ Form::hidden('proyectoNombre',$proyecto->name) }}
 								{{ Form::hidden('proyectoAutor',$proyecto->author) }}
+								{{ Form::hidden('proyectoDescripcion',$proyecto->description) }}
 								{{ Form::hidden('proyectoTiempoEstimado',$proyecto->tiempoEstimado) }}
 								{{ Form::submit('Nueva OT',[ 'class' => 'btn btn-danger' ]) }}
 							{{ Form::close() }}

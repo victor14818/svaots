@@ -49,7 +49,11 @@ Route::get('informacion','ProyectosController@lst_informacion');
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-Route::get('formsProyectos/show','FormsProyectosController@show');
+Route::get('projects/show','FormsProyectosController@show');
+Route::post('projects/{proyecto}/show','FormsProyectosController@showSingle');
+Route::post('projects/{proyecto}/edit','FormsProyectosController@edit');
+Route::post('projects/{proyecto}/deleteAttachment','FormsProyectosController@deleteAttachment');
+Route::get('projects/{proyecto}/downloadAttachments','FormsProyectosController@downloadAttachments');
 
 Route::post('formsProyectos/create','FormsProyectosController@create');
 //
@@ -60,7 +64,9 @@ Route::get('encuesta/tarea/{tarea}/seq/{seq}', 'EncuestaController@showencuesta'
 Route::post('nvencuestaingreso', 'EncuestaController@ingreso_encuesta');
 
 
-Route::get('prueba', 'TareasController@pruebaemail');
+Route::get('prueba', 'TareasController@prueba');
+Route::post('prueba', 'TareasController@pruebaPOST');
+
 //
 
 

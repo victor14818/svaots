@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Bootstrap CSS -->
-	{{ Html::style('css/bootstrap.min.css') }}
 	{{ Html::style('css/jquery.treetable.css') }}
+  {{ Html::style('css/bootstrap.min.css') }}
   <style>
     .panel-danger>.panel-heading {
           color: #ffffff;

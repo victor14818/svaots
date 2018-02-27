@@ -20,17 +20,17 @@ class ProyectosController extends Controller
     {
     	//EasyRedmineConn Clase donde se implementan las llamadas a la API de Redmine
     	$redmineConnectionAPI = new EasyRedmineConn();
-    	$respuesta=$redmineConnectionAPI->listarProyectos(0,100);
+/**    	$respuesta=$redmineConnectionAPI->listarProyectos(0,100);
     	if($respuesta == null)
     	{
     		return "<h1>Servicio temporalmente indisponible</h1><br><h3>Cominicarse con Ingeniería SVA (ingenieriasva@claro.com.gt) para mayor información</h3>";
     	}
-
+**/
     	/*
     	*Se parsea el XML obtenido para sacar el parámetro de total de proyectos en Redmine.
     	*Además se obtiene los primeros 100 items (proyectos).
 		*/
-	    $proyectos=simplexml_load_string(preg_replace('/&(?!;{6})/', '&amp;', $respuesta));
+/**	    $proyectos=simplexml_load_string(preg_replace('/&(?!;{6})/', '&amp;', $respuesta));
 		$cmp_total=$proyectos['total_count'];
 
 		//Se obtiene los demás items (proyectos) en caso de ser necesario y se agregan como un solo archivo XML.
@@ -50,7 +50,9 @@ class ProyectosController extends Controller
 		//Se convierte el árbol de proyectos en un array, tomando únicamente las hojas.
 		$listaProyectos = array();
 		self::get_proyectos_array($listaProyectos,$raiz);
-
+**/
+		$listaProyectos = array();
+		$listaProyectos = $redmineConnectionAPI->lst_proyectos();
 		return view('aplicacionOTS.proyectos',[ 'listaProyectos' => $listaProyectos ]);
     }  
 
@@ -134,17 +136,17 @@ class ProyectosController extends Controller
     {
 		    	//EasyRedmineConn Clase donde se implementan las llamadas a la API de Redmine
     	$redmineConnectionAPI = new EasyRedmineConn();
-    	$respuesta=$redmineConnectionAPI->listarProyectos(0,100);
+/**    	$respuesta=$redmineConnectionAPI->listarProyectos(0,100);
     	if($respuesta == null)
     	{
     		return "<h1>Servicio temporalmente indisponible</h1><br><h3>Cominicarse con Ingeniería SVA (ingenieriasva@claro.com.gt) para mayor información</h3>";
     	}
-
+**/
     	/*
     	*Se parsea el XML obtenido para sacar el parámetro de total de proyectos en Redmine.
     	*Además se obtiene los primeros 100 items (proyectos).
 		*/
-	    $proyectos=simplexml_load_string(preg_replace('/&(?!;{6})/', '&amp;', $respuesta));
+/**	    $proyectos=simplexml_load_string(preg_replace('/&(?!;{6})/', '&amp;', $respuesta));
 		$cmp_total=$proyectos['total_count'];
 
 		//Se obtiene los demás items (proyectos) en caso de ser necesario y se agregan como un solo archivo XML.
@@ -164,7 +166,9 @@ class ProyectosController extends Controller
 		//Se convierte el árbol de proyectos en un array, tomando únicamente las hojas.
 		$listaProyectos = array();
 		self::get_proyectos_array($listaProyectos,$raiz);
-
+**/
+		$listaProyectos = array();
+		$listaProyectos = $redmineConnectionAPI->lst_proyectos();
 		return view('aplicacionOTS.informacion', [ 'listaProyectos' => $listaProyectos ]);
     }
 

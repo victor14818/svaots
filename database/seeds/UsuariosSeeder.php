@@ -12,10 +12,16 @@ class UsuariosSeeder extends Seeder
      */
     public function run()
     {
-	User::create([
+	   User::create([
             'name' => 'Ingenieria SVA',
             'email' => 'ingenieriasva@claro.com.gt',
             'password' => bcrypt('ingSVAClaro0105'),
+        ]);
+
+       User::create([
+            'name' => 'victor',
+            'email' => 'victor.vela@claro.com.gt',
+            'password' => bcrypt('1234'),
         ]);
     }
 }
