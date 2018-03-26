@@ -129,10 +129,11 @@ class FormsProyectosController extends Controller
         try
         {
             //linux
-            //$rutaProyectoArchivos = Storage::disk('local')->getDriver()->getAdapter()->getPathPrefix().'formulariosProyectos/'.$request->proyectoId.'/' . $file_name_storage;
+	    $rutaProyectoArchivos = Storage::disk('local')->getDriver()->getAdapter()->getPathPrefix().'formulariosProyectos/'.$proyectoId;
+            $rutaProyectoArchivoComprimido = Storage::disk('local')->getDriver()->getAdapter()->getPathPrefix().'formulariosProyectos/'.$proyectoId.'.zip';
             //windows
-            $rutaProyectoArchivos = Storage::disk('local')->getDriver()->getAdapter()->getPathPrefix().'formulariosProyectos\\'.$proyectoId;
-            $rutaProyectoArchivoComprimido = Storage::disk('local')->getDriver()->getAdapter()->getPathPrefix().'formulariosProyectos\\'.$proyectoId.'.zip';
+            //$rutaProyectoArchivos = Storage::disk('local')->getDriver()->getAdapter()->getPathPrefix().'formulariosProyectos\\'.$proyectoId;
+            //$rutaProyectoArchivoComprimido = Storage::disk('local')->getDriver()->getAdapter()->getPathPrefix().'formulariosProyectos\\'.$proyectoId.'.zip';
 
             $existe = Storage::disk('local')->has('formulariosProyectos/'.$proyectoId.'.zip');
             if(!empty($existe))

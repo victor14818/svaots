@@ -24,15 +24,18 @@ class FormsTareasController extends Controller
     public function show()
     {
         $redmineConnectionAPI = new EasyRedmineConn();
-        $tareasOnLocal = Tarea::whereNotNull('numeroTarea')->where('validado',true)->where('cerrado',false)->get();
+        $tareasOnLocal = Tarea::whereNotNull('numeroTarea')->where('validado',true)->get();
         $listaTareas = array();
         foreach($tareasOnLocal as $tarea)
         {
-            $tareaObj = $redmineConnectionAPI->getTarea($tarea->numeroTarea);
-            if(($tareaObj->status != "Closed" || !self::seHaLLenadoEncuesta($tarea->numeroTarea)) && $tareaObj->status != "Rejected" && Auth::user()->redmineId == $tareaObj->assignedToId)
-            {
-                array_push($listaTareas,$tareaObj);
-            }
+	    if(!self::seHaLLenadoEncuesta($tarea->numeroTarea))
+	    {
+                $tareaObj = $redmineConnectionAPI->getTarea($tarea->numeroTarea);
+                if($tareaObj->status != "Closed" && $tareaObj->status != "Rejected" && Auth::user()->redmineId == $tareaObj->assignedToId)
+                {
+                    array_push($listaTareas,$tareaObj);
+                }
+	    }
         }
     	return view('aplicacionGestion.formsTareas',['listaTareas' => $listaTareas]);
     }

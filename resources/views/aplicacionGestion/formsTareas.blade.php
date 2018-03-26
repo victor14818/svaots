@@ -61,7 +61,7 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="exampleModalLabel">Mensaje</h4>
             </div>
-            <form method="POST" action="/tasks/closereject">
+            <form method="POST" action="{{ url('/') }}/tasks/closereject">
                 <div class="modal-body">
                 {{ csrf_field() }}
                     <input type="hidden" id="tipoAccionTarea" name="tipoAccionTarea" value="Close">
