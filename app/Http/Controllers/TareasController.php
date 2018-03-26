@@ -34,7 +34,9 @@ class TareasController extends Controller
 		$proyectoNombre = $request->proyectoNombre;
 		$proyectoAutor = $request->proyectoAutor;
 		$proyectoTiempoEstimado = $request->proyectoTiempoEstimado;
-		$tieneFormularios = true;
+
+		//Se verifica la existencia física archivos en la carpeta del proyectos.
+		$tieneFormularios=true;
 		$rutaProyectoArchivos = 'formulariosProyectos/'.$request->proyectoId;
 		$archivosDirectorioProyecto = Storage::files($rutaProyectoArchivos);
 		if (count($archivosDirectorioProyecto) == 0) 
@@ -58,19 +60,12 @@ class TareasController extends Controller
             $reglas = [
             	'clienteNombre' => 'required|max:250'
 			,	'clienteEmail' => 'email|max:250'
-			,	'clienteTelefono' => 'required|max:250'
+			,	'clienteTelefono' => 'required|digits:8'
 			,	'tareaAsunto' => 'required|max:250'
 			,	'tareaDescripcion' => 'required|max:1000'
 			,	'adjuntos' => 'required'
             ];
-
-
-			$nbr = count($request->input('adjuntos')) - 1;
-			foreach(range(0, $nbr) as $index) {
-				$reglas['adjuntos.' . $index] = 'required|max:2000';
-				$mensajes = ['adjuntos.' . $index . '.max' => 'The file failed to upload. Max size 2MB'];
-			}
-
+		
 			$validator = Validator::make($req,$reglas,$mensajes);
 
             if ($validator->fails()) {
@@ -122,17 +117,16 @@ class TareasController extends Controller
 
 			
 		    // Se envía correo de validación
-		    /*$data["name"] = $request->input("clienteNombre");
+		    $data["name"] = $request->input("clienteNombre");
 		    $data["email"] = $request->input("clienteEmail");
 		    $data["token"] = $tokenDeConfirmacion;
 		    $data["issueId"] = $issue_id;
 		    $data["issueSubject"] = $request->input("tareaAsunto");
 		    $data["issueDescription"] = $request->input("tareaDescripcion");
-		    Mail::to($request->input("clienteEmail"))->send(new verificacion($data));*/
+		    Mail::to($request->input("clienteEmail"))->send(new verificacion($data));
 
 			$request->session()->flash('alert-success', 'Se ha enviado un correo a la siguiente dirección: '.$request->input("clienteEmail").'. Por favor, siga las instrucciones en el mismo para validar la tarea');
 			return Redirect::to('/');
-
 		}
 		catch(\Exception $e)
 		{
@@ -143,7 +137,7 @@ class TareasController extends Controller
 		        self::borrar_uploads_local($files);
 		    }
 		    Log::info($e);
-			$request->session()->flash('alert-warning', 'No se ha podido realizar la acción requerdida, por favor comuníquese con el personal de ingeniería SVA (ingenieriasva@claro.com.gt)');
+			$request->session()->flash('alert-warning', 'No se ha podido realizar la acción requerida, por favor comuníquese con el personal de ingeniería SVA (ingenieriasva@claro.com.gt)');
 			return Redirect::to('/');
 		}
     }
@@ -210,10 +204,7 @@ class TareasController extends Controller
 							,	$issue->autorProyecto
 							,	$issue->asunto
 
-							,	"Cliente: " . $issue->nombreCliente 
-							."-Correo: " . $issue->emailCliente
-							."-Teléfono: " . $issue->telefonoCliente 
-							."-Descripción: " . preg_replace('/[[:space:]]+/',' ',$issue->descripcion)  
+							,	preg_replace('/[[:space:]]+/',' ',$issue->descripcion)  
 							,   date("Y-m-d")
 							,	date("Y-m-d", strtotime(date("Y-m-d")." + ".$issue->tiempoEstimadoProyecto." days"))
 							,	"0" 
@@ -252,15 +243,14 @@ class TareasController extends Controller
 
 
 						    $dat["phone"] = $issue->telefonoCliente;
-						    $dat["s"] = $issue->asunto;
 						    $dat["name"] = $issue->nombreCliente;
 						    $dat["email"] = $issue->emailCliente;
 						    $dat["issueSubject"] = $issue->asunto;
 						    $dat["issueDescription"] = $issue->descripcion;
 						    $dat["project"] = $issue->nombreProyecto;
 						    $dat["issueId"] = $tarea_id_rst;
-						    //Mail::to("ingenieriasva@claro.com.gt")->send(new aviso($dat));
-						    Mail::to("victor.vela@claro.com.gt")->send(new aviso($dat));
+						    Mail::to("ingenieriasva@claro.com.gt")->send(new aviso($dat));
+						    //Mail::to("victor.vela@claro.com.gt")->send(new aviso($dat));
 
 						    return view('resultadoCorreo',['msg' => 'La tarea ha sido validada exitósamente. Se ha ingresado la OT con número de tarea '.$tarea_id_rst, 'issue_id' => $tarea_id_rst, 'flag' => 1]);
 						}
@@ -287,7 +277,7 @@ class TareasController extends Controller
 		}		
     }
 
-    public function prueba()
+ /*   public function prueba()
     {
     	$nsoIP = '10.255.24.188';
     	$nsoPort = '8080';
@@ -365,6 +355,6 @@ class TareasController extends Controller
 		echo $response->getStatusCode();
 		echo $response->getHeaderLine('content-type');
 		echo $response->getBody();
-*/	
-    }
+
+    }*/	
 }

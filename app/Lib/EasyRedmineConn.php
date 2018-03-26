@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Exception;
 use App\Lib\Proyecto;
-use App\Proyecto as modelProyecto;
+use App\Lib\Tarea;
 
 class EasyRedmineConn
 {
@@ -192,8 +192,7 @@ class EasyRedmineConn
     }
 
     /*
-    * Documentar ?????
-    *
+    * lst_proyectos Función que devuelve un array con Objetos tipo Proyecto.
     */
     public function lst_proyectos()
     {
@@ -202,7 +201,7 @@ class EasyRedmineConn
         $respuesta=$redmineConnectionAPI->listarProyectos(0,100);
         if($respuesta == null)
         {
-            return "<h1>Servicio temporalmente indisponible</h1><br><h3>Cominicarse con Ingeniería SVA (ingenieriasva@claro.com.gt) para mayor información</h3>";
+            return null;
         }
 
         /*
@@ -222,15 +221,13 @@ class EasyRedmineConn
             $cmp+=100;
         }
 
-        //Se establece el poryecto raíz, éstos valor se buscarón de antemano
+        //Se establece el poryecto raíz, éstos valor se buscaron de antemano
         $raiz = new Proyecto('221','OTs Internas','OTs de Clientes internos','0','0', Null);
         self::get_proyectos_hijos($raiz->proyectos,$raiz->id,$proyectos);
 
         //Se convierte el árbol de proyectos en un array, tomando únicamente las hojas.
         $listaProyectos = array();
         self::get_proyectos_array($listaProyectos,$raiz);
-
-        //return view('aplicacionOTS.proyectos',[ 'listaProyectos' => $listaProyectos ]);
 
         return $listaProyectos;
     }  
@@ -303,6 +300,203 @@ class EasyRedmineConn
         {
             array_push($arreglo,$nodo);
         }
+    }
+
+    /*
+    *listarTareas Función para realizar una conulsta al API de redmine 
+    *@proyectoId Id del proyecto del que se desean obtener las tareas.
+    */
+    public function listarTareas($proyectoId,$offset)
+    {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, "http://".$this->ip."/issues.xml?project_id=".$proyectoId."&offset=".$offset."&limit=100&key=".$this->key);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+        curl_setopt($ch, CURLOPT_HEADER, FALSE);    
+        //curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 120); 
+        //curl_setopt($ch, CURLOPT_TIMEOUT, 1000);
+
+        $response = curl_exec($ch);
+        $flagError = false;
+        if(curl_error($ch))
+        {
+            Log::info('Error: ' . curl_error($ch));
+            $flagError = true;
+        }
+        curl_close($ch);
+        if($flagError)
+        {
+            return null;
+        }
+        return $response;
+    }
+
+    /*
+    *lst_tareas Función obtener un arreglo con las tareas de un determinado proyecto
+    *@proyectoId Id del proyecto del que se desean obtener las tareas.
+    */
+    public function lst_tareas($proyectoId)
+    {
+        //EasyRedmineConn Clase donde se implementan las llamadas a la API de Redmine
+        $redmineConnectionAPI = new EasyRedmineConn();
+        $respuesta=$redmineConnectionAPI->listarTareas($proyectoId,0);
+        if($respuesta == null)
+        {
+            return "<h1>Servicio temporalmente indisponible</h1><br><h3>Cominicarse con Ingeniería SVA (ingenieriasva@claro.com.gt) para mayor información</h3>";
+        }
+
+        $tareas=simplexml_load_string(preg_replace('/&(?!;{6})/', '&amp;', $respuesta));
+        $cmp_total=$tareas['total_count'];
+
+        //Se obtiene los demás items (tareas) en caso de ser necesario y se agregan como un solo archivo XML.
+        $cmp=100;
+        while($cmp < $cmp_total)
+        {
+            $respuesta=$redmineConnectionAPI->listarTareas($cmp,100);
+            $tareas_tmp=simplexml_load_string(preg_replace('/&(?!;{6})/', '&amp;', $respuesta));
+            self::append_simplexml($tareas,$tareas_tmp);
+            $cmp+=100;
+        }
+
+        //Se recorre objeto simpleXML para formar un objeto de tipo Tarea.
+        foreach($tareas->issue as $issue)
+        {
+            echo $issue->id;
+        }
+        
+        //return $listaTareas;
+
+    }
+
+
+    /*
+    *getTarea Función obtener una tarea desde Redmine por medio de su ID
+    *@tareaId Id de la tarea en Redmine.
+    */
+    public function getTareaAPI($tareaId)
+    {
+        try{
+
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, "http://".$this->ip."/issues/".$tareaId.".xml?key=".$this->key);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+            curl_setopt($ch, CURLOPT_HEADER, FALSE);
+
+            $response = curl_exec($ch);
+            $flagError = false;
+            if(curl_error($ch))
+            {
+                Log::info('Error: ' . curl_error($ch));
+                $flagError = true;
+            }
+            curl_close($ch);
+            if($flagError)
+            {
+                return null;
+            }
+            return $response;
+        }catch(\Exception $e)
+        {
+            return null;
+        }
+    }
+
+    public function getTarea($tareaId)
+    {
+        try
+        {
+
+            //EasyRedmineConn Clase donde se implementan las llamadas a la API de Redmine
+            $redmineConnectionAPI = new EasyRedmineConn();
+            $respuesta=$redmineConnectionAPI->getTareaAPI($tareaId);
+            if($respuesta == null)
+            {
+                return null;
+            }
+
+            /*
+            *Se parsea el XML obtenido para sacar los valores de la tarea
+            */
+            $tareaXMLObject=simplexml_load_string(preg_replace('/&(?!;{6})/', '&amp;', $respuesta));
+
+            foreach($tareaXMLObject->custom_fields->custom_field as $custom_field)
+            {
+                switch ($custom_field["name"]) {
+                    case "Envío de OT":
+                        $envioOT = $custom_field->value;
+                        break;                    
+                    case "[BO] Ejecución":
+                        $boEjecucion = $custom_field->value;
+                        break;                    
+                    case "[IP] Ejecución":
+                        $ipEjecucion = $custom_field->value;
+                        break;                    
+                }
+            }
+
+            $tarea = new Tarea(
+                    $tareaXMLObject->id
+                ,   $tareaXMLObject->project["id"]
+                ,   $tareaXMLObject->project["name"]
+                ,   $tareaXMLObject->status["name"]
+                ,   $tareaXMLObject->assigned_to["id"]
+                ,   $tareaXMLObject->assigned_to["name"]
+                ,   $tareaXMLObject->subject
+                ,   $tareaXMLObject->description
+                ,   $tareaXMLObject->start_date
+                ,   $tareaXMLObject->due_date
+                ,   null
+                ,   $envioOT
+                ,   $boEjecucion
+                ,   $ipEjecucion
+            );
+
+            return $tarea;
+        }catch(\Exception $e)
+        {
+            return null;
+        }
+    }
+
+
+    /*
+    *ModificarTarea Función que sirve para modificar campos de una tarea
+    *@tareaId número de tarea a modificar
+    *@campos array con los campos a modificar.
+    */
+    public function modificarTarea($tareaId,$campos)
+    {
+        $stringCampo = "<issue>";
+        foreach($campos as $campo)
+        {
+            $stringCampo .= $campo;
+        }
+        $stringCampo .= "</issue>";        
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, "http://".$this->ip."/issues/".$tareaId.".xml?key=".$this->key);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+        curl_setopt($ch, CURLOPT_HEADER, FALSE);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $stringCampo);
+
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            "Content-Type: application/xml"
+        ));
+
+        $response = curl_exec($ch);
+        $flagError = false;
+        if(curl_error($ch))
+        {
+            Log::info('Error: ' . curl_error($ch));
+            $flagError = true;
+        }
+        curl_close($ch);
+        if($flagError)
+        {
+            return null;
+        }
+        return $response;
+        
     }
 }
 

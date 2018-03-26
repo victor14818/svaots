@@ -30,10 +30,10 @@
 	<table>
 	  <tr>
 	    <th>Asunto</th>
-	    <td>{{ $subject }}</td>
+	    <th>Descripción</th>
 	  </tr>
 	  <tr>
-	    <th>Descripción</th>
+	    <td>{{ $subject }}</td>
 	    <td>{{ $description }}</td>
 	  </tr>
 	</table>

@@ -31,11 +31,13 @@ class confirmacionCerrarTarea extends Mailable
      */
     public function build()
     {
-        return $this->subject('Aviso tarea '.$this->data['issue_id'].' cerrada')
+        return $this->subject('OT ing SVA '.$this->data['issueId'].' '.$this->data['action'])
 				->view('confirmacionTareaCerradaMail')->with([
                         'name' => $this->data['name'],
-			'issue_id' => $this->data['issue_id'],
-			'token' => $this->data['token']
+            			'issueId' => $this->data['issueId'],
+            			'token' => $this->data['token'],
+                        'action' => $this->data['action'],
+                        'msg' => $this->data['message'],
                     ]);
     }
 }

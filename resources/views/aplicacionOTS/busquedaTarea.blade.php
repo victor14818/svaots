@@ -14,7 +14,7 @@
 	<div class="panel-heading">Datos de la tarea</div>
 	<center>
 		<div class="panel-body">
-			{{ Form::open([ 'url' => '' ]) }}
+			{{ Form::open([ 'url' => 'buscartarea/form' ]) }}
 			<div class="row">
 				<div class="col-md-6">{{ Form::label('Número de tarea') }}</div>
 				<div class="col-md-6">{{ Form::text('tareaId', '', array('class' => 'form-control', 'required', 'id' => 'tareaId')) }}</div>
@@ -35,6 +35,7 @@
 					</center>
 				</div>
 			</div>
+			{{ Form::close() }}
 		</div>
 	</center>
 </div>
@@ -64,7 +65,7 @@
 					<td><strong>Estado:</strong></td>
 					<td>{{ $datosTareaRedmine->estado }}</td>
 				</tr>
-				<tr>
+				<!-- <tr>
 					<td><strong>Progreso</strong></td>
 					<td>
 						<div class="progress">
@@ -73,7 +74,7 @@
 							</div>
 						</div>
 					</td>
-				</tr>
+				</tr> -->
 				<tr>
 					<td><strong>Fecha de inicio:</strong></td>
 					<td>{{ $datosTareaRedmine->fechaIngreso }}</td>
@@ -103,7 +104,7 @@
 								<form method='POST' action=' {{ url("/") }}/download'>
 									{{ csrf_field() }}
 									<input type='hidden' value='{{ $adjunto->filename }}' name='fileName'>
-									<input type='hidden' value='{{ $adjunto->content_url."?key=".$key }}' name='fileUrl'>
+									<input type='hidden' value='{{ $adjunto->content_url }}' name='fileUrl'>
 									<input type='hidden' value='{{ $adjunto->content_type }}' name='fileContentType'>
 									<input class='btn btn-info' type='submit' value='{{ $adjunto->filename }}'>
 								</form>		

@@ -2,10 +2,46 @@
 
 @section('content')
 <style>
-	tr:hover {
-	    color:white;
-	    background-color: #EF3729;
-	}
+.myButton {
+	-moz-box-shadow: 0px 10px 14px -7px #73272b;
+	-webkit-box-shadow: 0px 10px 14px -7px #73272b;
+	box-shadow: 0px 10px 14px -7px #73272b;
+	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #ef3629), color-stop(1, #9e0d00));
+	background:-moz-linear-gradient(top, #ef3629 5%, #9e0d00 100%);
+	background:-webkit-linear-gradient(top, #ef3629 5%, #9e0d00 100%);
+	background:-o-linear-gradient(top, #ef3629 5%, #9e0d00 100%);
+	background:-ms-linear-gradient(top, #ef3629 5%, #9e0d00 100%);
+	background:linear-gradient(to bottom, #ef3629 5%, #9e0d00 100%);
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ef3629', endColorstr='#9e0d00',GradientType=0);
+	background-color:#ef3629;
+	-moz-border-radius:8px;
+	-webkit-border-radius:8px;
+	border-radius:8px;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:Verdana;
+	font-size:20px;
+	font-weight:bold;
+	padding:15px 50px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #8a3e4d;
+	height: 80px;
+}
+.myButton:hover {
+	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #9e0d00), color-stop(1, #ef3629));
+	background:-moz-linear-gradient(top, #9e0d00 5%, #ef3629 100%);
+	background:-webkit-linear-gradient(top, #9e0d00 5%, #ef3629 100%);
+	background:-o-linear-gradient(top, #9e0d00 5%, #ef3629 100%);
+	background:-ms-linear-gradient(top, #9e0d00 5%, #ef3629 100%);
+	background:linear-gradient(to bottom, #9e0d00 5%, #ef3629 100%);
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#9e0d00', endColorstr='#ef3629',GradientType=0);
+	background-color:#9e0d00;
+}
+.myButton:active {
+	position:relative;
+	top:1px;
+}
 </style>
 
 	<!-- Main component for a primary marketing message or call to action -->
@@ -52,36 +88,23 @@
 	    <center><h3>Proyectos disponibles</h3><hr></center>
 		<br>
 		<!-- <table class="table table-striped"> -->
-		<div class="listaProyectos">
-			<table class="table">
-				<thead>
-					<th>Proyecto</th>
-					<th>Descripción</th>
-					<th></th>
-				</thead>
-				<tbody>
+		<div class="row">
+			<div class="col-sm-8 col-md-offset-2">
 				@foreach($listaProyectos as $proyecto)
-					<tr>
-						<td class="elegible" style="font-family:'Courier New', Courier, monospace; font-style: italic;"> {{ $proyecto->name }}</td>
-						<td class="elegible" style="font-family:'Courier New', Courier, monospace; font-style: italic;"> {{ $proyecto->description }}</td>
-						<td>
-							{{ Form::open([ 'url' => 'nuevatarea', 'id' => trim(strtolower($proyecto->name)), 'method' => 'GET' ]) }}
-								{{ Form::token() }}
-								{{ Form::hidden('proyectoId',$proyecto->id) }}
-								{{ Form::hidden('proyectoNombre',$proyecto->name) }}
-								{{ Form::hidden('proyectoAutor',$proyecto->author) }}
-								{{ Form::hidden('proyectoDescripcion',$proyecto->description) }}
-								{{ Form::hidden('proyectoTiempoEstimado',$proyecto->tiempoEstimado) }}
-								{{ Form::submit('Nueva OT',[ 'class' => 'btn btn-danger' ]) }}
-							{{ Form::close() }}
-							@if(isset($proyecto->archivoFormularioGenerico))
-								<a href='{{ url("/") }}/descargararchivoproyecto/{{ $proyecto->archivoFormularioGenerico }}' class='btn btn-info'>Descargar</a>
-							@endif
-						</td>
-					</tr>
+				<div>					
+					{{ Form::open([ 'url' => 'tarea/fgshow', 'id' => ''.$proyecto->id, 'method' => 'POST' ]) }}
+						{{ Form::token() }}
+						{{ Form::hidden('proyectoId',$proyecto->id) }}
+						{{ Form::hidden('proyectoNombre',$proyecto->name) }}
+						{{ Form::hidden('proyectoAutor',$proyecto->author) }}
+						{{ Form::hidden('proyectoDescripcion',$proyecto->description) }}
+						{{ Form::hidden('proyectoTiempoEstimado',$proyecto->tiempoEstimado) }}
+						{{ Form::submit(''.$proyecto->name,[ 'class' => 'myButton form-control' ]) }}
+					{{ Form::close() }}
+				</div>	
+				<br>				
 				@endforeach
-				</tbody>
-			</table>
+			</div>
 		</div>
     </div>
 

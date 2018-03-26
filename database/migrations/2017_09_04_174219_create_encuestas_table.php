@@ -15,10 +15,10 @@ class CreateEncuestasTable extends Migration
     {
         Schema::create('encuestas', function (Blueprint $table) {
             $table->increments('id');
-    	    $table->integer('satisfaccion')->nullable();
-    	    $table->integer('satisfaccion_tiempo')->nullable();
+    	    $table->boolean('cumplimiento')->nullable();
+    	    $table->string('descTiempoDeEntrega')->nullable();
     	    $table->integer('calificacion')->nullable();
-    	    $table->string('observaciones')->nullable();
+    	    $table->text('observaciones')->nullable();
     	    $table->string('tarea')->nullable();
     	    $table->string('proyecto')->nullable();
     	    $table->string('token')->nullable();

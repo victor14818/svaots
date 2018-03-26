@@ -1,4 +1,7 @@
 <?php
+/*
+Controlador para las configuraciones de los Formularios
+*/
 
 namespace App\Http\Controllers;
 
@@ -9,27 +12,54 @@ use App\Services\PayUService\Exception;
 use Illuminate\Support\Facades\Storage;
 use App\Lib\Proyecto;   
 use App\Lib\EasyRedmineConn;
-use App\Proyecto as modelProyecto;
 use Route;
 use Zip;
+use Auth;
 
 class FormsProyectosController extends Controller
 {
+
+    /*
+    *show Función que busca los proyectos de Redmine y los filtra según el ID que tiene asignado el ususario localmente (redmineId).
+    */
     public function show()
     {
         $redmineConnectionAPI = new EasyRedmineConn();
+        $listaProyectosTmp = array();
+        $listaProyectosTmp = $redmineConnectionAPI->lst_proyectos();
         $listaProyectos = array();
-        $listaProyectos = $redmineConnectionAPI->lst_proyectos();
-    	return view('aplicacionOTS.formsProyectos',['listaProyectos' => $listaProyectos]);
+
+        if(Auth::user()->hasRole('admin'))
+        {
+            $listaProyectos = $listaProyectosTmp;
+        }
+        else
+        {
+            //Filtro de proyectos según el autor y el usuario logueado.
+            foreach($listaProyectosTmp as $proyecto)
+            {
+                if($proyecto->author == Auth::user()->redmineId)
+                {
+                    array_push($listaProyectos,$proyecto);
+                }
+            }            
+        }
+    	return view('aplicacionGestion.formsProyectos',['listaProyectos' => $listaProyectos]);
     }
 
+    /*
+    *showSingle Función que busca los archivo asociaciados a un proyecto.
+    */
     public function showSingle(Request $request)
     {
         $proyecto = new Proyecto($request->proyectoId, $request->proyectoNombre,null,null,null,array());
         $listaArchivoFormularioGenerico = Adjunto::where('project',$request->proyectoId)->get();
-        return view('aplicacionOTS.formsProyectosSingle',['proyecto' => $proyecto, 'listaArchivoFormularioGenerico' => $listaArchivoFormularioGenerico]);
+        return view('aplicacionGestion.formsProyectosSingle',['proyecto' => $proyecto, 'listaArchivoFormularioGenerico' => $listaArchivoFormularioGenerico]);
     }
 
+    /*
+    *edit Función que guarda los archivos que vienen en el Request y los asocia a un proyecto con su Id.
+    */
     public function edit(Request $request)
     {
         try{
@@ -64,7 +94,9 @@ class FormsProyectosController extends Controller
 
     }
 
-
+    /*
+    *deleteAttachment Función que elimina un archivo asociado a un poryecto.
+    */
     public function deleteAttachment(Request $request)
     {
         try
@@ -89,6 +121,9 @@ class FormsProyectosController extends Controller
         return Route::dispatch($request)->getContent();        
     }
 
+    /*
+    *downloadAttachments Función que descarga todos los archcivos asociados a un proyecto comprimidos en formato ZIP. 
+    */
     public function downloadAttachments($proyectoId)
     {
         try

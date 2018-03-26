@@ -37,7 +37,7 @@ class aviso extends Mailable
                         'name' => $this->data['name'],
 						'email' => $this->data['email'],
 						'issueId' => $this->data['issueId'],
-                        'descripcion' => $this->data['issueDescription']
+                        'description' => $this->data['issueDescription']
                     ]);
     }
 }

@@ -52,7 +52,12 @@
 
                                 <ul class="dropdown-menu" role="menu">
                                     <li><a href="{{ url('projects/show') }}">Proyectos</a></li>
-                                    <li><a href="{{ route('register') }}">Register</a></li>
+                                    @role('admin')
+                                        <li><a href="{{ url('register') }}">Register</a></li>
+                                    @endrole
+                                    @role('owner')
+                                    <li><a href="{{ url('tasks/show') }}">Tareas</a></li>
+                                    @endrole
                                     <li>
                                         <a href="{{ route('logout') }}"
                                             onclick="event.preventDefault();

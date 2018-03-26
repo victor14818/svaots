@@ -30,10 +30,10 @@
 	<table>
 	  <tr>
 	    <th>Asunto</th>
-	    <td>{{ $subject }}</td>
+	    <th>Descripción</th>
 	  </tr>
 	  <tr>
-	    <th>Descripción</th>
+	    <td>{{ $subject }}</td>
 	    <td>{{ $description }}</td>
 	  </tr>
 	</table>
@@ -47,14 +47,12 @@
 	<table>
 	  <tr>
 	    <th>Número de tarea</th>
-	    <td>{{ $issueId }}</td>
-	  </tr>
-	  <tr>
 	    <th>Código</th>
-	    <td>{{ $token }}</td>
+	    <th>Correo</th>
 	  </tr>
 	  <tr>
-	    <th>Correo</th>
+	    <td>{{ $issueId }}</td>
+	    <td>{{ $token }}</td>
 	    <td>{{ $email }}</td>
 	  </tr>
 	</table>
