@@ -37,9 +37,11 @@ class HomeController extends Controller
 	    if(!self::seHaLLenadoEncuesta($tarea->numeroTarea))
 	    {
                 $tareaObj = $redmineConnectionAPI->getTarea($tarea->numeroTarea);
+		if(!is_null($tareaObj))
+		{
                 if( Auth::user()->hasRole('admin') )
                 {
-                    if($tareaObj->status != "Closed" && $tareaObj->status != "Rejected")
+                    if($tareaObj->status != "Rejected")
                     {
                         array_push($listaTareas,$tareaObj);
                     }            
@@ -48,12 +50,13 @@ class HomeController extends Controller
                 {
                     if(Auth::user()->redmineId == $tareaObj->assignedToId)
                     {
-                        if($tareaObj->status != "Closed" && $tareaObj->status != "Rejected")
+                        if($tareaObj->status != "Rejected")
                         {
                             array_push($listaTareas,$tareaObj);
                         }
                     }   
                 }
+		}
 	    }
         }
 

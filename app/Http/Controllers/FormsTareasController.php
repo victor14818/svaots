@@ -31,7 +31,7 @@ class FormsTareasController extends Controller
 	    if(!self::seHaLLenadoEncuesta($tarea->numeroTarea))
 	    {
                 $tareaObj = $redmineConnectionAPI->getTarea($tarea->numeroTarea);
-                if($tareaObj->status != "Closed" && $tareaObj->status != "Rejected" && Auth::user()->redmineId == $tareaObj->assignedToId)
+                if($tareaObj->status != "Rejected" && Auth::user()->redmineId == $tareaObj->assignedToId)
                 {
                     array_push($listaTareas,$tareaObj);
                 }
@@ -77,11 +77,15 @@ class FormsTareasController extends Controller
                     $encuesta->proyecto = $request->projectName;
                     $encuesta->token = $tarea->token;
                     $encuesta->save();
+		    
+		    //indica que ya se ha cerrado la tarea por lo que no la buscará de nuevo
+ 	            $tarea->cerrado = true;
+		    $tarea->save();
                 }
-                //indica que ya se ha cerrado la tarea por lo que no la buscará de nuevo
-                $tarea->cerrado = true;
-                $tarea->save();
-                
+                if($request->tipoAccionTarea == "Reject")
+                {
+		    $tarea->delete();
+	 	}
                 return Redirect::back()->withErrors(['Se completó la acción']);
             }
             else

@@ -465,12 +465,12 @@ class EasyRedmineConn
     */
     public function modificarTarea($tareaId,$campos)
     {
-        $stringCampo = "<issue>";
+	$stringCampo = "<issue>";
         foreach($campos as $campo)
         {
             $stringCampo .= $campo;
         }
-        $stringCampo .= "</issue>";        
+        $stringCampo .= "</issue>"; 
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, "http://".$this->ip."/issues/".$tareaId.".xml?key=".$this->key);
@@ -493,6 +493,7 @@ class EasyRedmineConn
         curl_close($ch);
         if($flagError)
         {
+	    echo "error";
             return null;
         }
         return $response;
