@@ -27,12 +27,12 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="{{ url('/').'/home' }}">Ing. SVA</a>
+          <a class="navbar-brand" href="{{ url('/') }}">Ing. SVA</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <li><a href="buscartarea/tarea/0/email/0/seq/0">Buscar OT</a></li>
-            <li><a href="informacion">Información tiempos estimados</a></li>
+            <li><a href="{{ url('/') }}/buscartarea/tarea/0/email/0/seq/0">Buscar OT</a></li>
+            <li><a href="{{ url('/') }}/informacion">Información tiempos estimados</a></li>
           </ul>
         </div>
       </div>
