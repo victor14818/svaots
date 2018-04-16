@@ -22,7 +22,7 @@
                                 <tr>
                                     <td colspan="2">{{ $adjunto->name }}</td>
                                     <td>
-                                        {{ Form::open(array('url' => 'projects/'.urlencode($proyecto->name).'/deleteAttachment', 'class' => 'form-horizontal', 'method' => 'POST')) }}
+                                        {{ Form::open(array('url' => 'projects/'.preg_replace('/[^A-Za-z0-9]/', '', $proyecto->name).'/deleteAttachment', 'class' => 'form-horizontal', 'method' => 'POST')) }}
                                         {{ Form::hidden('proyectoId',$proyecto->id) }}
                                         {{ Form::hidden('proyectoNombre',$proyecto->name) }}
                                         {{ Form::hidden('adjuntoId',$adjunto->id) }}
@@ -35,7 +35,7 @@
                         </table>
                     </div>
                 </div>
-                {{ Form::open(array('url' => 'projects/'.urlencode($proyecto->name).'/edit', 'class' => 'form-horizontal', 'enctype'=>'multipart/form-data')) }}
+                {{ Form::open(array('url' => 'projects/'.preg_replace('/[^A-Za-z0-9]/', '', $proyecto->name).'/edit', 'class' => 'form-horizontal', 'enctype'=>'multipart/form-data')) }}
                 {{ Form::token() }}
                     <div class="form-group ">
                         <div class="row col-md-8 col-md-offset-2">

@@ -23,7 +23,7 @@
                                     <td>{{ $proyecto->id }}</td>
                                     <td>{{ $proyecto->name }}</td>
                                     <td>
-                                        {{ Form::open(array('url' => 'projects/'.urlencode($proyecto->name).'/show', 'class' => 'form-horizontal', 'method' => 'POST')) }}
+                                        {{ Form::open(array('url' => 'projects/'.preg_replace('/[^A-Za-z0-9]/', '', $proyecto->name).'/show', 'class' => 'form-horizontal', 'method' => 'POST')) }}
                                         {{ Form::hidden('proyectoId',$proyecto->id) }}
                                         {{ Form::hidden('proyectoNombre',$proyecto->name) }}
                                         {{ Form::submit('Editar') }}

@@ -117,8 +117,9 @@ class FormsProyectosController extends Controller
         
         }
 
-        $request = Request::create('projects/'.urlencode($request->proyectoNombre).'/show', 'POST', ['proyectoId' => $request->adjuntoId, 'proyectoNombre' => $request->proyectoNombre, '_token' => $request->session()->token()]);
-        return Route::dispatch($request)->getContent();        
+        //$request = Request::create('projects/'.preg_replace('/[^A-Za-z0-9]/', '', $request->proyectoNombre).'/show', 'POST', ['proyectoId' => $request->proyectoId, 'proyectoNombre' => $request->proyectoNombre, '_token' => $request->session()->token()]);
+        //return Route::dispatch($request)->getContent();    
+        return Redirect::to('projects/show');    
     }
 
     /*
