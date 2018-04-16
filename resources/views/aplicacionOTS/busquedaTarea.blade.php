@@ -21,11 +21,11 @@
 			</div>
 			<div class="row">
 				<div class="col-md-6">{{ Form::label('Código') }}</div>
-				<div class="col-md-6">{{ Form::text('token', '', array('class' => 'form-control', 'id' => 'token')) }}</div>
+				<div class="col-md-6">{{ Form::text('token', '', array('class' => 'form-control', 'id' => 'token', 'required')) }}</div>
 			</div>
 			<div class="row">
 				<div class="col-md-6">{{ Form::label('Correo') }}</div>
-				<div class="col-md-6">{{ Form::text('correo', '', array('class' => 'form-control', 'id' => 'correo')) }}</div>
+				<div class="col-md-6">{{ Form::email('correo', '', array('class' => 'form-control', 'id' => 'correo', 'required')) }}</div>
 			</div>
 			<br>
 			<div class="row">
