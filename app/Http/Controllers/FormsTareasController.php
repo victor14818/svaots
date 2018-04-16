@@ -28,14 +28,17 @@ class FormsTareasController extends Controller
         $listaTareas = array();
         foreach($tareasOnLocal as $tarea)
         {
-	    if(!self::seHaLLenadoEncuesta($tarea->numeroTarea))
-	    {
+    	    if(!self::seHaLLenadoEncuesta($tarea->numeroTarea))
+    	    {
                 $tareaObj = $redmineConnectionAPI->getTarea($tarea->numeroTarea);
-                if($tareaObj->status != "Rejected" && Auth::user()->redmineId == $tareaObj->assignedToId)
+                if(!is_null($tareaObj))
                 {
-                    array_push($listaTareas,$tareaObj);
+                    if($tareaObj->status != "Rejected" && Auth::user()->redmineId == $tareaObj->assignedToId)
+                    {
+                        array_push($listaTareas,$tareaObj);
+                    }
                 }
-	    }
+    	    }
         }
     	return view('aplicacionGestion.formsTareas',['listaTareas' => $listaTareas]);
     }
@@ -78,14 +81,12 @@ class FormsTareasController extends Controller
                     $encuesta->token = $tarea->token;
                     $encuesta->save();
 		    
-		    //indica que ya se ha cerrado la tarea por lo que no la buscará de nuevo
- 	            $tarea->cerrado = true;
-		    $tarea->save();
+                    $tarea->save();
                 }
                 if($request->tipoAccionTarea == "Reject")
                 {
-		    $tarea->delete();
-	 	}
+                    $tarea->delete();
+                }
                 return Redirect::back()->withErrors(['Se completó la acción']);
             }
             else

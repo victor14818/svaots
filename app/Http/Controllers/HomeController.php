@@ -34,30 +34,30 @@ class HomeController extends Controller
         $listaTareas = array();
         foreach($tareasOnLocal as $tarea)
         {
-	    if(!self::seHaLLenadoEncuesta($tarea->numeroTarea))
-	    {
+    	    if(!self::seHaLLenadoEncuesta($tarea->numeroTarea))
+    	    {
                 $tareaObj = $redmineConnectionAPI->getTarea($tarea->numeroTarea);
-		if(!is_null($tareaObj))
-		{
-                if( Auth::user()->hasRole('admin') )
-                {
-                    if($tareaObj->status != "Rejected")
-                    {
-                        array_push($listaTareas,$tareaObj);
-                    }            
-                }
-                else
-                {
-                    if(Auth::user()->redmineId == $tareaObj->assignedToId)
+        		if(!is_null($tareaObj))
+        		{
+                    if( Auth::user()->hasRole('admin') )
                     {
                         if($tareaObj->status != "Rejected")
                         {
                             array_push($listaTareas,$tareaObj);
-                        }
-                    }   
+                        }            
+                    }
+                    else
+                    {
+                        if(Auth::user()->redmineId == $tareaObj->assignedToId)
+                        {
+                            if($tareaObj->status != "Rejected")
+                            {
+                                array_push($listaTareas,$tareaObj);
+                            }
+                        }   
+                    }
                 }
-		}
-	    }
+            }
         }
 
         $chartOpenTask = Charts::create('pie', 'fusioncharts')

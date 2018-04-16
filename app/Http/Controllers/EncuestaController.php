@@ -40,7 +40,11 @@ class EncuestaController extends Controller
 			$encuesta->observaciones = $request->observaciones;
 			$encuesta->token = '';
 			$encuesta->save();
-			$request->session()->flash('alert-success', 'Encuesta ingresada exitosamente');
+
+
+			//indica que ya se ha cerrado (hay que buscar la tarea y actualizarla)
+        	//$tarea->cerrado = true;
+			$request->session()->flash('alert-success', 'Encuesta ingresada exitósamente');
 			return Redirect::to('/');	
 		}catch(\Exception $e)
 		{
