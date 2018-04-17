@@ -24,7 +24,7 @@ class FormsTareasController extends Controller
     public function show()
     {
         $redmineConnectionAPI = new EasyRedmineConn();
-        $tareasOnLocal = Tarea::whereNotNull('numeroTarea')->where('validado',true)->get();
+        $tareasOnLocal = Tarea::whereNotNull('numeroTarea')->where('validado',true)->where('cerrado',false)->get();
         $listaTareas = array();
         foreach($tareasOnLocal as $tarea)
         {
@@ -37,6 +37,10 @@ class FormsTareasController extends Controller
                     {
                         array_push($listaTareas,$tareaObj);
                     }
+                }
+                else 
+                {
+                    Log::info('El número de tarea '.$tarea->numeroTarea. ' no se encuentra en el sistema');
                 }
     	    }
         }

@@ -8,6 +8,7 @@ use Charts;
 use App\Tarea;
 use App\Encuesta;
 use App\Lib\EasyRedmineConn;
+use Log;
 
 
 class HomeController extends Controller
@@ -30,7 +31,7 @@ class HomeController extends Controller
     public function index()
     {
         $redmineConnectionAPI = new EasyRedmineConn();
-        $tareasOnLocal = Tarea::whereNotNull('numeroTarea')->where('validado',true)->get();
+        $tareasOnLocal = Tarea::whereNotNull('numeroTarea')->where('validado',true)->where('cerrado',false)->get();
         $listaTareas = array();
         foreach($tareasOnLocal as $tarea)
         {
@@ -56,6 +57,10 @@ class HomeController extends Controller
                             }
                         }   
                     }
+                }
+                else 
+                {
+                    Log::info('El número de tarea '.$tarea->numeroTarea. ' no se encuentra en el sistema');
                 }
             }
         }

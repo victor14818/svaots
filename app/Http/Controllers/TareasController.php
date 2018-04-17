@@ -277,6 +277,7 @@ class TareasController extends Controller
 		}		
     }
 
+
  /*   public function prueba()
     {
     	$nsoIP = '10.255.24.188';

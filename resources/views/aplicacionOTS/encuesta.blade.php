@@ -82,6 +82,7 @@
 				    		{{ Form::token() }}
 						    {{ Form::hidden('proyecto', $encuesta->proyecto) }}
 						    {{ Form::hidden('id', $encuesta->id) }}
+						    {{ Form::hidden('numeroTarea', $tarea->numeroTarea) }}
 				    		{{ Form::submit('Enviar', array('class' => 'btn btn-danger form-control')) }}
 				    	</div>
 				    </div>

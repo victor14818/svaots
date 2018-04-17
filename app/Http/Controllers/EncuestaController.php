@@ -33,7 +33,7 @@ class EncuestaController extends Controller
     {
     	try
     	{
-			$encuesta = Encuesta::find($request->id);
+			$encuesta = Encuesta::findOrFail($request->id);
 			$encuesta->cumplimiento = $request->cumplimiento;
 			$encuesta->descTiempoDeEntrega = $request->tiempo;
 			$encuesta->calificacion = $request->calificacion;
@@ -43,7 +43,12 @@ class EncuestaController extends Controller
 
 
 			//indica que ya se ha cerrado (hay que buscar la tarea y actualizarla)
-        	//$tarea->cerrado = true;
+			$tarea = Tarea::where('numeroTarea',$request->numeroTarea)->firstOrFail();
+			if(!is_null($tarea))
+			{
+				$tarea->cerrado = true;
+				$tarea->save();
+			}
 			$request->session()->flash('alert-success', 'Encuesta ingresada exitósamente');
 			return Redirect::to('/');	
 		}catch(\Exception $e)

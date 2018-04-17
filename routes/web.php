@@ -75,26 +75,6 @@ Route::post('buscartarea/form', 'BusquedasController@buscarTareap');
 Route::post('/download','AdjuntosController@descargar_adjunto');
 
 
-
-
-/*Route::get('download/{filename}', function($filename)
-{
-    $relative_path = 'tmp_files/'. $filename;
-    $absolute_path = Storage::disk('local')->getDriver()->getAdapter()->getPathPrefix() . $relative_path;
-	
-    if (file_exists($absolute_path))
-    {
-        return response()->download($absolute_path);
-    }
-    else
-    {
-
-        exit('Requested file does not exist on our server! ' . $absolute_path);
-    }
-});*/
-
-//Route::post('formsProyectos/create','FormsProyectosController@create');
-
 //Route::get('prueba', 'TareasController@prueba');
 //Route::post('prueba', 'TareasController@pruebaPOST');
 

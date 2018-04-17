@@ -417,6 +417,9 @@ class EasyRedmineConn
             *Se parsea el XML obtenido para sacar los valores de la tarea
             */
             $tareaXMLObject=simplexml_load_string(preg_replace('/&(?!;{6})/', '&amp;', $respuesta));
+            $envioOT = null;
+            $boEjecucion = null;
+            $ipEjecucion = null;
 
             foreach($tareaXMLObject->custom_fields->custom_field as $custom_field)
             {
