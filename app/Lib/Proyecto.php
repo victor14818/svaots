@@ -10,9 +10,10 @@ class Proyecto
     public $proyectos;
     public $author;
     public $tiempoEstimado;
+    public $informedUsersEmails;
     public $archivoFormularioGenerico;
 
-    function __construct($id,$nm,$dsc,$auth,$tiempo,$archivoFormGen)
+    function __construct($id,$nm,$dsc,$auth,$tiempo,$informedUsersEmails,$archivoFormGen)
     {
         $this->id = $id;
     	$this->name = $nm;
@@ -20,6 +21,7 @@ class Proyecto
     	$this->proyectos = array();
     	$this->author = $auth;
     	$this->tiempoEstimado = $tiempo;
+        $this->informedUsersEmails = $informedUsersEmails;
         $this->archivoFormularioGenerico = $archivoFormGen;
     }
 }

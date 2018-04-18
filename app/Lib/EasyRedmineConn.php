@@ -222,7 +222,7 @@ class EasyRedmineConn
         }
 
         //Se establece el poryecto raíz, éstos valor se buscaron de antemano
-        $raiz = new Proyecto('221','OTs Internas','OTs de Clientes internos','0','0', Null);
+        $raiz = new Proyecto('221','OTs Internas','OTs de Clientes internos','0','0', Null, Null);
         self::get_proyectos_hijos($raiz->proyectos,$raiz->id,$proyectos);
 
         //Se convierte el árbol de proyectos en un array, tomando únicamente las hojas.
@@ -265,17 +265,26 @@ class EasyRedmineConn
             if($project->parent['id'] == $id_padre)
             {
                 $tiempo_estimado=0;
+                $informedUsersEmails=Null;
                 foreach($project->custom_fields->custom_field as $custom_field)
                 {
                     if($custom_field["name"] == "Tiempo estimado")
                     {
                         $tiempo_estimado = $custom_field->value;
                     }
+                    if($custom_field["name"] == "informedUsersCrmSva")
+                    {
+                        $informedUsersEmails = array();
+                        foreach($custom_field->value->value as $informedUser)
+                        {
+                            array_push($informedUsersEmails,$informedUser);
+                        }
+                    }
                 }
                 //Se buscan las propiedades locales
                 //archivo de formulario genérico array que guarda los archivos locales asociados a este proyecto
                 $archivoFormularioGenerico = Null;
-                $proyecto_hijo=new Proyecto($project->id,$project->name,$project->description,$project->author["id"],$tiempo_estimado,$archivoFormularioGenerico);
+                $proyecto_hijo=new Proyecto($project->id,$project->name,$project->description,$project->author["id"],$tiempo_estimado,$informedUsersEmails,$archivoFormularioGenerico);
                 self::get_proyectos_hijos($proyecto_hijo->proyectos,"".$proyecto_hijo->id,$proyectos);
                 array_push($arreglo_padre,$proyecto_hijo);
             }

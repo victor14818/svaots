@@ -99,6 +99,11 @@
 						{{ Form::hidden('proyectoAutor',$proyecto->author) }}
 						{{ Form::hidden('proyectoDescripcion',$proyecto->description) }}
 						{{ Form::hidden('proyectoTiempoEstimado',$proyecto->tiempoEstimado) }}
+						@if( !is_null($proyecto->informedUsersEmails))
+							@foreach( $proyecto->informedUsersEmails as $informedUsers)
+								{{ Form::hidden('proyectoUsuariosInformados[]',$informedUsers) }}
+							@endforeach
+						@endif
 						{{ Form::submit(''.$proyecto->name,[ 'class' => 'myButton form-control' ]) }}
 					{{ Form::close() }}
 				</div>	

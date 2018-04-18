@@ -14,6 +14,7 @@ use App\Mail\confirmacion;
 use App\Mail\aviso;
 use App\Tarea;
 use App\Adjunto;
+use App\UsuarioInformado;
 use Redirect;
 use App\Lib\EasyRedmineConn;
 use Exception;
@@ -34,7 +35,11 @@ class TareasController extends Controller
 		$proyectoNombre = $request->proyectoNombre;
 		$proyectoAutor = $request->proyectoAutor;
 		$proyectoTiempoEstimado = $request->proyectoTiempoEstimado;
-
+		$proyectoUsuariosInformados = Null;
+		if($request->has('proyectoUsuariosInformados'))
+		{
+			$proyectoUsuariosInformados = $request->proyectoUsuariosInformados;			
+		}
 		//Se verifica la existencia física archivos en la carpeta del proyectos.
 		$tieneFormularios=true;
 		$rutaProyectoArchivos = 'formulariosProyectos/'.$request->proyectoId;
@@ -43,7 +48,8 @@ class TareasController extends Controller
 		{
 			$tieneFormularios = false;
 		}
-		return view('aplicacionOTS.formularioGenerico',['proyectoId' => $proyectoId, 'proyectoNombre' => $proyectoNombre, 'proyectoAutor' => $proyectoAutor, 'proyectoTiempoEstimado' => $proyectoTiempoEstimado, 'tieneFormularios' => $tieneFormularios, 'proyectoDescripcion'  => $request->proyectoDescripcion]);
+
+		return view('aplicacionOTS.formularioGenerico',['proyectoId' => $proyectoId, 'proyectoNombre' => $proyectoNombre, 'proyectoAutor' => $proyectoAutor, 'proyectoTiempoEstimado' => $proyectoTiempoEstimado, 'tieneFormularios' => $tieneFormularios, 'proyectoDescripcion'  => $request->proyectoDescripcion, 'listaProyectoUsuariosInformados' => json_encode($proyectoUsuariosInformados)]);
     }
 
     public function ingresoTarea(Request $request)
@@ -102,7 +108,7 @@ class TareasController extends Controller
 				{
 				    $file_name_storage = str_replace("?","",$adjunto->getClientOriginalName());
 			   	    $relative_path = $adjunto->storeAs('tmp_files',$file_name_storage,'local');
-				    //Obtener la rutha completa del archivo
+				    //Obtener la ruta completa del archivo
 				    $absolute_path = Storage::disk('local')->getDriver()->getAdapter()->getPathPrefix().$relative_path;			
 
 				    $file = new Adjunto;
@@ -115,6 +121,27 @@ class TareasController extends Controller
 				}		
 		    }
 
+
+		    //Se guardan los usuarios que van a ser informados de la tarea ingresada
+		    if($request->has('proyectoUsuariosInformados'))
+		    {
+		    	foreach($request->proyectoUsuariosInformados as $usuarioInformadoEmail)
+		    	{
+			    	$usuarioInformado = new UsuarioInformado;
+				    $usuarioInformado->emailCliente = strtolower($request->input("clienteEmail"));
+				    $usuarioInformado->token = $tokenDeConfirmacion;
+				    $usuarioInformado->correoInformado = $usuarioInformadoEmail;	
+				    $usuarioInformado->save();	    		
+		    	}
+		    }else
+		    {
+		    	//El proyecto no tiene informedUsers en Redmine 
+		    	$usuarioInformado = new UsuarioInformado;
+			    $usuarioInformado->emailCliente = strtolower($request->input("clienteEmail"));
+			    $usuarioInformado->token = $tokenDeConfirmacion;
+			    $usuarioInformado->correoInformado = 'ingenieriasva@claro.com.gt';
+			    $usuarioInformado->save();
+		    }
 			
 		    // Se envía correo de validación
 		    $data["name"] = $request->input("clienteNombre");
@@ -241,6 +268,15 @@ class TareasController extends Controller
 						    $data["email"] = $issue->emailCliente;
 						    Mail::to($issue->emailCliente)->send(new confirmacion($data));
 
+		
+							//Se recuperan los usuarios informados
+							$usuariosInformados = array();
+							$usuariosInformadosRegistros = UsuarioInformado::where('emailCliente',$email)->where('token',$confirm_token)->get();
+							foreach($usuariosInformadosRegistros as $usuarioInformado)
+							{
+								array_push($usuariosInformados,$usuarioInformado->correoInformado);
+							}
+							UsuarioInformado::where('emailCliente',$email)->where('token',$confirm_token)->delete();
 
 						    $dat["phone"] = $issue->telefonoCliente;
 						    $dat["name"] = $issue->nombreCliente;
@@ -249,8 +285,9 @@ class TareasController extends Controller
 						    $dat["issueDescription"] = $issue->descripcion;
 						    $dat["project"] = $issue->nombreProyecto;
 						    $dat["issueId"] = $tarea_id_rst;
-						    Mail::to("ingenieriasva@claro.com.gt")->send(new aviso($dat));
+						    Mail::to($usuariosInformados)->send(new aviso($dat));
 						    //Mail::to("victor.vela@claro.com.gt")->send(new aviso($dat));
+
 
 						    return view('resultadoCorreo',['msg' => 'La tarea ha sido validada exitósamente. Se ha ingresado la OT con número de tarea '.$tarea_id_rst, 'issue_id' => $tarea_id_rst, 'flag' => 1]);
 						}

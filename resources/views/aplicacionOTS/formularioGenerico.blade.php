@@ -115,6 +115,15 @@
 	    {{ Form::hidden('proyectoNombre', $proyectoNombre) }}
 	    {{ Form::hidden('proyectoAutor', $proyectoAutor) }}
 	    {{ Form::hidden('proyectoTiempoEstimado', $proyectoTiempoEstimado) }}
+	    @php
+	    	$listaUsuariosInformados = json_decode($listaProyectoUsuariosInformados,true);
+	    @endphp
+	    @if( !is_null($listaUsuariosInformados))
+	    	@foreach( $listaUsuariosInformados as $informedUsers)
+	    		 <input name="proyectoUsuariosInformados[]" type="hidden" value="{{ $informedUsers }}">
+	    	@endforeach
+	    @endif
+	    
 	    <div class="row">
 		    <div class="pull-right">
 		    	{{ Form::submit('Ingresar', array('class' => 'btn btn-danger')) }}
