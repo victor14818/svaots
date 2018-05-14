@@ -9,6 +9,7 @@ use App\Tarea;
 use App\Encuesta;
 use App\Lib\EasyRedmineConn;
 use Log;
+use DB;
 
 
 class HomeController extends Controller
@@ -104,22 +105,22 @@ class HomeController extends Controller
         $chartDateTask->values(array_values($listaTask));  
 
         //Encuestas por calificación
-        $chartSurveyGrade = Charts::database(Encuesta::all(), 'bar', 'highcharts')
-        ->title('Survey Grade')
+        $chartSurveyGrade = Charts::database(Encuesta::where('token','')->get(), 'bar', 'highcharts')
+        ->title('¿Cómo calificaría su satisfacción con el servicio?')
         ->elementLabel("Total")
         ->dimensions(0, 200)
         ->responsive(false)
         ->groupBy('calificacion');
 
-        $chartSurveyTime = Charts::database(Encuesta::all(), 'pie', 'highcharts')
-        ->title('Survey Time Delivery')
+        $chartSurveyTime = Charts::database(Encuesta::where('token','')->get(), 'pie', 'highcharts')
+        ->title('¿La OT fue solventada en el tiempo establecido?')
         ->elementLabel("Total")
         ->dimensions(0, 200)
         ->responsive(false)
         ->groupBy('descTiempoDeEntrega');
 
-        $chartSurveyExec = Charts::database(Encuesta::all(), 'donut', 'highcharts')
-        ->title('Survey Done')
+        $chartSurveyExec = Charts::database(Encuesta::select(DB::raw("case when cumplimiento > 0 then 'sí' else 'no' end as cumplimiento"))->where('token','')->get(), 'donut', 'highcharts')
+        ->title('¿Se ha cumplido con el requerimiento inicial?')
         ->elementLabel("Total")
         ->dimensions(0, 200)
         ->responsive(false)

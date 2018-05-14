@@ -52,7 +52,7 @@ class FormsProyectosController extends Controller
     */
     public function showSingle(Request $request)
     {
-        $proyecto = new Proyecto($request->proyectoId, $request->proyectoNombre,null,null,null,array());
+        $proyecto = new Proyecto($request->proyectoId, $request->proyectoNombre,null,null,null,array(),null);
         $listaArchivoFormularioGenerico = Adjunto::where('project',$request->proyectoId)->get();
         return view('aplicacionGestion.formsProyectosSingle',['proyecto' => $proyecto, 'listaArchivoFormularioGenerico' => $listaArchivoFormularioGenerico]);
     }

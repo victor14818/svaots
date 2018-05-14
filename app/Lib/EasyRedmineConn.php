@@ -283,6 +283,10 @@ class EasyRedmineConn
                 }
                 //Se buscan las propiedades locales
                 //archivo de formulario genérico array que guarda los archivos locales asociados a este proyecto
+                //validaciones de parámetos que pueden ser null en Redmine author y tiempo_estimado
+                $author = $project->author["id"];
+                is_null($tiempo_estimado) || empty($tiempo_estimado) || !isset($tiempo_estimado)? '0' : $tiempo_estimado;
+                is_null($author) ? '80' : $author;
                 $archivoFormularioGenerico = Null;
                 $proyecto_hijo=new Proyecto($project->id,$project->name,$project->description,$project->author["id"],$tiempo_estimado,$informedUsersEmails,$archivoFormularioGenerico);
                 self::get_proyectos_hijos($proyecto_hijo->proyectos,"".$proyecto_hijo->id,$proyectos);

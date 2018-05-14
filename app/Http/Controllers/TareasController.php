@@ -60,7 +60,6 @@ class TareasController extends Controller
 		try
 		{
 			//validaciones
-
 			$req = $request->all();
 			$mensajes = array();
             $reglas = [
@@ -90,6 +89,7 @@ class TareasController extends Controller
 			    	, 'autorProyecto' => $request->input("proyectoAutor")
 			    	, 'asunto' => preg_replace('~[\'"&]~','',$request->input("tareaAsunto")) 
 			    	, 'tiempoEstimadoProyecto' => $request->input("proyectoTiempoEstimado")
+			    	//, 'tiempoEstimadoProyecto' => is_null($request->input("proyectoTiempoEstimado")) ? '0' : $request->input("proyectoTiempoEstimado")
 			    	, 'descripcion' => preg_replace('~[\'"&]~','',$request->input("tareaDescripcion")) 
 			    	, 'nombreCliente' => $request->input("clienteNombre")
 			    	, 'emailCliente' => strtolower($request->input("clienteEmail"))
